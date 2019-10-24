@@ -1,0 +1,997 @@
+public class Functions {
+
+    public static final int X=1;
+    public static final int O=-1;
+
+    public static int board[][] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    public  static int probO[][] = {{3, 2, 3}, {2, 4, 2}, {3, 2, 3}};
+    public  static int probX[][] = {{3, 2, 3}, {2, 4, 2}, {3, 2, 3}};
+
+
+    public static boolean cont=false;
+    public static boolean plus2FinderBool=false;
+    public static boolean minus2FinderBool=false;
+    public static boolean jackpotForOBool=false;
+    public static boolean probFinder1Bool =false;
+    public static boolean probFinder2Bool =false;
+    public static boolean isWin=false;
+
+    public static int player = O;               /*((((int) (Math.random() * 1000000000)) % 2 == 0) ? 1 : */
+
+    public static int sum(int para) {
+        int sum1 = 0;
+        switch (para) {
+
+            case 1: {
+                for (int j = 0; j <= 2; j++) {
+                    sum1 += board[0][j];
+
+                }
+                break;
+            }
+
+            case 2: {
+                for (int j = 0; j <= 2; j++) {
+                    sum1 += board[1][j];
+                }
+                break;
+            }
+            case 3: {
+                for (int j = 0; j <= 2; j++) {
+                    sum1 += board[2][j];
+                }
+                break;
+            }
+            case 4: {
+                for (int i = 0; i <= 2; i++) {
+                    sum1 += board[i][0];
+                }
+                break;
+            }
+
+            case 5: {
+                for (int i = 0; i <= 2; i++) {
+                    sum1 += board[i][1];
+                }
+                break;
+            }
+
+            case 6: {
+                for (int i = 0; i <= 2; i++) {
+                    sum1 += board[i][2];
+                }
+                break;
+            }
+
+            case 7: {
+
+                for (int i = 0; i <= 2; i++) {
+                    int j = i;
+                    sum1 += board[i][j];
+                }
+                break;
+            }
+
+            case 8: {
+                for (int j = 2; j >= 0; j--) {
+                    int i = 2 - j;
+                    sum1 += board[i][j];
+                }
+                break;
+            }
+
+        }
+        return sum1;
+    }
+
+    public static void putSign(int x, int y) {
+        if (x < 0 || x > 2 || y < 0 || y > 2) {
+            System.out.println("Invalid board position");
+            return;
+        }
+        if (board[x][y] != 0) {
+            System.out.println("Board position occupied");
+            return;
+        }
+        board[x][y] = -1;
+        probX[x][y] = 0;
+        decrementprobX(x, y);
+        player = -player;
+    }
+
+    public static String display() {
+        StringBuilder s = new StringBuilder();
+        cont = false;
+        //isEmpty = false;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                switch (board[i][j]) {
+                    case X:
+                        s.append(" X ");
+                        break;
+                    case O:
+                        s.append(" O ");
+                        break;
+                    case 0:
+                        s.append("   ");
+                        cont = true;
+                        break;
+                }
+//                for (int y=0; y<=2; y++){
+//                    for (int z=0; z<=2; z++){
+//                        if (board[i][j]==0){
+//                            cont=true;
+//                        }
+//                    }
+//                }
+                if (j < 2) {
+                    s.append("|");
+                }
+
+            }
+            if (i < 2) {
+                s.append("\n-----------\n");
+            }
+        }
+        return s.toString();
+    }
+
+    public static void disp() {
+        System.out.println(display()+"\n------------------------------------------------------------------------------------------------------------------------------------------------------\n------------------------------------------------------------------------------------------------------------------------------------------------------");
+        for (int i = 0; i <= 2; i++) {
+            System.out.print("{");
+            for (int j = 0; j <= 2; j++) {
+                System.out.print(" " + probX[i][j] + ", ");
+            }
+            System.out.print("}");
+        }
+        System.out.println("\nO:-----------");
+        for (int i = 0; i <= 2; i++) {
+            System.out.print("{");
+            for (int j = 0; j <= 2; j++) {
+                System.out.print(" " + probO[i][j] + ", ");
+            }
+            System.out.print("}");
+        }
+        System.out.println();
+//        System.out.println("\n------------------------------------------------------------------------------------------------------------------------------------------------------\n------------------------------------------------------------------------------------------------------------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+
+        findWinner();
+    }
+
+    public static void findWinner() {
+        isWin = false;
+        for (int k = 0; k <= 8; k++) {
+            if (sum(k) == 3 || sum(k) == -3) {
+                System.out.println(sum(k) == 3 ? "\n\nComputer wins!!!" : "\n\nYou won!!!");
+                isWin = true;
+                player=O;
+                cont = false;
+                return;
+            }
+        }
+
+    }
+
+    public static void plus2Finder() {
+        plus2FinderBool = false;
+        for (int k = 1; k <= 8; k++) {
+            if (sum(k) == 2) {
+
+                switch (k) {
+                    case 1:
+                        for (int j = 0; j <= 2; j++) {
+                            if (board[0][j] != 0) {
+                                continue;
+                            } else {
+                                board[0][j] = 1;
+                                probO[0][j]=0;
+                                decrementprobO(0,j);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        for (int j = 0; j <= 2; j++) {
+                            if (board[1][j] != 0) {
+                                continue;
+                            } else {
+                                board[1][j] = 1;
+                                probO[1][j] = 0;
+                                decrementprobO(1,j);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        for (int j = 0; j <= 2; j++) {
+
+                            if (board[2][j] != 0) {
+                                continue;
+                            } else {
+                                board[2][j] = 1;
+                                probO[2][j] = 0;
+                                decrementprobO(2,j);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        for (int i = 0; i <= 2; i++) {
+                            if (board[i][0] != 0) {
+                                continue;
+                            } else {
+                                board[i][0] = 1;
+                                probO[i][0] = 0;
+                                decrementprobO(i,0);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 5:
+                        for (int i = 0; i <= 2; i++) {
+                            if (board[i][1] != 0) {
+                                continue;
+                            } else {
+                                board[i][1] = 1;
+                                probO[i][1] = 0;
+                                decrementprobO(i,1);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 6:
+                        for (int i = 0; i <= 2; i++) {
+                            if (board[i][2] != 0) {
+                                continue;
+                            } else {
+                                board[i][2] = 1;
+                                probO[i][2] = 0;
+                                decrementprobO(i,2);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 7:
+                        for (int i = 0; i <= 2; i++) {
+                            int j = i;
+
+                            if (board[i][j] != 0) {
+                                continue;
+                            } else {
+                                board[i][j] = 1;
+                                probO[i][j] = 0;
+                                decrementprobO(i,j);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 8:
+                        for (int j = 2; j >= 0; j--) {
+                            int i = 2 - j;
+                            if (board[i][j] != 0) {
+                                continue;
+                            } else {
+                                board[i][j] = 1;
+                                probO[i][j] = 0;
+                                decrementprobO(i,j);
+                                player = -player;
+                                plus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                }
+                //todo write code for finding and filling the empty box
+            }
+        }
+    }
+
+    public static void minus2Finder() {
+        minus2FinderBool = false;
+        for (int k = 1; k <= 8; k++) {
+            if (sum(k) == -2) {
+
+                switch (k) {
+                    case 1:
+                        for (int j = 0; j <= 2; j++) {
+                            if (board[0][j] != 0) {
+                                continue;
+                            } else {
+                                board[0][j] = 1;
+                                probO[0][j] = 0;
+                                decrementprobO(0,j);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+//
+                    case 2:
+                        for (int j = 0; j <= 2; j++) {
+                            if (board[1][j] != 0) {
+                                continue;
+                            } else {
+                                board[1][j] = 1;
+                                probO[1][j] = 0;
+                                decrementprobO(1,j);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        for (int j = 0; j <= 2; j++) {
+
+                            if (board[2][j] != 0) {
+                                continue;
+                            } else {
+                                board[2][j] = 1;
+                                probO[2][j] = 0;
+                                decrementprobO(2,j);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        for (int i = 0; i <= 2; i++) {
+                            if (board[i][0] != 0) {
+                                continue;
+                            } else {
+                                board[i][0] = 1;
+                                probO[i][0] = 0;
+                                decrementprobO(i,0);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 5:
+                        for (int i = 0; i <= 2; i++) {
+                            if (board[i][1] != 0) {
+                                continue;
+                            } else {
+                                board[i][1] = 1;
+                                probO[i][1] = 0;
+                                decrementprobO(i,1);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 6:
+                        for (int i = 0; i <= 2; i++) {
+                            if (board[i][2] != 0) {
+                                continue;
+                            } else {
+                                board[i][2] = 1;
+                                probO[i][2] = 0;
+                                decrementprobO(i,2);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 7:
+                        for (int i = 0; i <= 2; i++) {
+                            int j = i;
+
+                            if (board[i][j] != 0) {
+                                continue;
+                            } else {
+                                board[i][j] = 1;
+                                probO[i][j] = 0;
+                                decrementprobO(i,j);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    case 8:
+                        for (int j = 2; j >= 0; j--) {
+                            int i = 2 - j;
+                            if (board[i][j] != 0) {
+                                continue;
+                            } else {
+                                board[i][j] = 1;
+                                probO[i][j] = 0;
+                                decrementprobO(i,j);
+                                player = -player;
+                                minus2FinderBool = true;
+                                return;
+                            }
+                        }
+                        break;
+
+                    //todo write code for finding and filling the empty box
+                }
+            }
+        }
+    }
+
+    public static void jackpotForO() {
+        jackpotForOBool = false;
+        int list1[]={0,0,0,0,0,0,0,0};
+
+        int countjackpots1 = 0;
+        int countjackpots2 = 0;
+        int sumjackpot = 0;
+        for (int i = 0; i <= 2; i++) {
+            for (int j = 0; j <= 2; j++) {
+                countjackpots1 = 0;
+
+                if (board[i][j] == 0) {
+                    board[i][j] = -1;
+                    for (int k = 1; k <= 8; k++) {
+                        sumjackpot = sum(k);
+                        if (sumjackpot == -2) {
+                            countjackpots1++;
+                        }
+                    }
+                    board[i][j] = 0;
+                }
+                if (countjackpots1 >= 2) {
+                    countjackpots2++;
+                }
+            }
+        }
+                if (countjackpots2 >= 2) {
+                    for (int x = 0; x <= 2; x++) {
+                        for (int y = 0; y <= 2; y++) {
+                            countjackpots1 = 0;
+                            if (board[x][y] == 0) {
+                                board[x][y] = -1;
+                                for (int k = 1; k <= 8; k++) {
+                                    sumjackpot = sum(k);
+                                    if (sumjackpot == -2) {
+                                        countjackpots1++;
+                                        list1[k]=1;
+                                    }
+                                }
+                                board[x][y] = 0;
+                                if (countjackpots1 >= 2) {
+                                    continue;
+                                } else
+                                    board[x][y] = 1;
+                                jackpotForOBool = true;
+                                return;
+                            }
+                        }
+                    }
+                }
+                if (countjackpots2 == 1) {
+                    countjackpots1=0;
+                    for (int a = 0; a <= 2; a++) {
+                        for (int b = 0; b <= 2; b++) {
+                            if (board[a][b] == 0) {
+                                board[a][b] = -1;
+                                for (int k = 1; k <= 8; k++) {
+                                    sumjackpot = sum(k);
+                                    if (sumjackpot == -2) {
+                                        countjackpots1++;
+                                    }
+                                }
+                                if (countjackpots1==2){
+                                    board[a][b]=1;
+                                    jackpotForOBool=true;
+                                    return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    public static void neverLoose(){
+
+    }
+
+public static int[][] probFinder1() {
+    probFinder1Bool = false;
+
+    int list1[][] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    probFinder1Bool = false;
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probX[i][j] != 4) {
+                continue;
+            } else {
+                if (board[i][j]==0) {
+                    list1[i][j] = 1;
+                    probFinder1Bool = true;
+                }
+            }
+        }
+    }
+    if (probFinder1Bool == true) {
+        return list1;
+    }
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probO[i][j] != 4) {
+                continue;
+            } else {
+                if (board[i][j]==0) {
+                    list1[i][j] = 1;
+                    probFinder1Bool = true;
+                }
+            }
+        }
+    }
+    if (probFinder1Bool == true) {
+        return list1;
+    }
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probX[i][j] != 3) {
+
+                continue;
+            } else {
+                if (board[i][j]==0) {
+                    list1[i][j] = 1;
+                    probFinder1Bool = true;
+                }
+            }
+        }
+    }
+    if (probFinder1Bool == true) {
+        return list1;
+    }
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probX[i][j] != 2) {
+
+                continue;
+            } else {
+                if (board[i][j]==0) {
+                    list1[i][j] = 1;
+                    probFinder1Bool =true;
+                }
+            }
+        }
+    }
+    if (probFinder1Bool == true) {
+        return list1;
+    }
+
+
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probX[i][j] != 1) {
+
+                continue;
+            } else {
+                if(board[i][j]==0){
+                    list1[i][j] = 1;
+                }
+                probFinder1Bool = true;
+            }
+        }
+    }
+    if (probFinder1Bool ==true){
+        return list1;
+    }
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+
+            if (probO[i][j] != 1) {
+                continue;
+            } else {
+                if (board[i][j]==0) {
+                    list1[i][j] = 1;
+                    probFinder1Bool = true;
+                }
+            }
+        }
+    }
+    if (probFinder1Bool ==true) {
+        return list1;
+    }
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probX[i][j] != 0) {
+
+                continue;
+            } else {
+                if(board[i][j]==0){
+                    list1[i][j] = 1;
+                }
+                probFinder1Bool = true;
+            }
+        }
+    }
+    if (probFinder1Bool ==true){
+        return list1;
+    }
+
+    for (int i = 0; i <= 2; i++) {
+        for (int j = 0; j <= 2; j++) {
+
+            if (probO[i][j] != 0) {
+
+                continue;
+            } else {
+                if(board[i][j]==0){
+                    list1[i][j] = 1;
+                }
+                probFinder1Bool = true;
+            }
+        }
+    }
+    return list1;
+}
+
+
+    public /*static*/ void probFinder2() {
+        int countspl = 0;
+        int countO = 0;
+        int countX = 0;
+        boolean myBool = false;
+        probFinder2Bool = false;
+        player = 1;
+        boolean probBool = false;
+        probFinder1Bool = false;
+        int[][] list2 = probFinder1();
+        int count = 0;
+
+        do {
+            for (int i = 0; i <= 2; i++) {
+                for (int j = 0; j <= 2; j++) {
+//                    && ((Math.random() * 1000) % count == 0)
+                   // if ((list2[i][j] == 1) && ((((int) (Math.random() * 100000)) % count)) == 0) {
+                        board[i][j] = 1;
+                        probO[i][j] = 0;
+                        myBool = true;
+                        decrementprobO(i, j);
+                        probFinder2Bool = true;
+                        player = -player;
+                        return;
+                    }
+                }
+        } while (myBool == true);
+    }
+//        } else {
+//
+//
+//            if (count == countspl) {
+//                do {
+//                    for (int i = 0; i <= 2; i++) {
+//                        for (int j = 0; j <= 2; j++) {
+////                    && ((Math.random() * 1000) % count == 0)
+//                            if ((list2[i][j] == 1) && ((((int) (Math.random() * 100000)) % count)) == 0) {
+//                                b[i][j] = 1;
+//                                y1[i][j] = 0;
+//                                o1[i][j] = 0;
+//                                myBool = true;
+//                                decrementer1(i, j);
+//                                bool = true;
+//                                player = -player;
+//                                return;
+//                            }
+//                        }
+//                    }
+//                } while (myBool == true);
+//            } else {
+//                do {
+//                    for (int i = 0; i <= 2; i++) {
+//                        for (int j = 0; j <= 2; j++) {
+//                            if (countspl != 0) {
+//                                if ((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)) {
+////                    && ((Math.random() * 1000) % count == 0)
+//                                    if ((list2[i][j] == 1) && ((((int) (Math.random() * 100000)) % count)) == 0) {
+//                                        b[i][j] = 1;
+//                                        y1[i][j] = 0;
+//                                        o1[i][j] = 0;
+//                                        myBool = true;
+//                                        decrementer1(i, j);
+//                                        bool = true;
+//                                        player = -player;
+//                                        return;
+//                                    }
+//                                }
+//                            } else {
+//                                if ((list2[i][j] == 1) && ((((int) (Math.random() * 100000)) % count)) == 0) {
+//                                    b[i][j] = 1;
+//                                    y1[i][j] = 0;
+//                                    o1[i][j] = 0;
+//                                    myBool = true;
+//                                    decrementer1(i, j);
+//                                    bool = true;
+//                                    player = -1;
+//                                    return;
+//                                }
+//                            }
+//                        }
+//                    }
+//                } while (myBool == true);
+//            }
+////        } while (probBool == false);
+////
+////            probFinder1Bool = true;
+////            return;
+//        }
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+    public static void decrementprobX(int s, int r) {
+        int[][] boolDia={{0,0,0},{0,0,0},{0,0,0}};
+        int[][] boolRow={{0,0,0},{0,0,0},{0,0,0}};
+        int[][] boolCol={{0,0,0},{0,0,0},{0,0,0}};
+        if (s == 1 && r == 1) {
+            probX[1][1]=0;
+            if ((probX[0][0]!=0)&& boolDia[0][0]==0) {
+                probX[0][0]=probX[0][0]-1;
+                boolDia[0][0]=1;
+            }
+            if ((probX[0][2]!=0)&& boolDia[0][2]==0) {
+                probX[0][2]=probX[0][2]-1;
+                boolDia[0][2]=1;
+            }
+            if ((probX[2][0]!=0)&& boolDia[2][0]==0) {
+                probX[2][0]=probX[2][0]-1;
+                boolDia[2][0]=1;
+            }
+            if ((probX[2][2]!=0)&& boolDia[2][2]==0) {
+                probX[2][2]=probX[2][2]-1;
+                boolDia[2][2]=1;
+            }
+            if ((probX[0][1]!=0)&&(boolCol[0][1]==0)) {
+
+                probX[0][1]=probX[0][1]-1;
+                boolCol[0][1]=1;
+            }
+            if ((probX[1][0]!=0)&&(boolRow[1][0]==0)) {
+
+                probX[1][0]=probX[1][0]-1;
+                boolRow[1][0]=1;
+            }
+            if ((probX[2][1]!=0)&&(boolCol[2][1]==0)) {
+
+                probX[2][1]=probX[2][1]-1;
+                boolCol[2][1]=1;
+            }
+            if ((probX[1][2]!=0)&&(boolRow[1][2]==0)) {
+
+                probX[1][2]=probX[1][2]-1;
+                boolRow[1][2]=1;
+            }
+            return;
+        } else {
+            for (int i = 0; i <= 2; i++) {
+                if (probX[s][i] == 0) {
+
+                    continue;
+                } else {
+                    if (boolRow[s][i] == 1) {
+                        continue;
+                    } else {
+                        probX[s][i] = probX[s][i] - 1;
+                        boolRow[s][i] = 1;
+                    }
+
+                }
+            }
+
+            for (int i = 0; i <= 2; i++) {
+                if (probX[i][r] == 0) {
+                    continue;
+                } else {
+                    if (boolCol[i][r] == 1) {
+                        continue;
+                    } else {
+                        probX[i][r] = probX[i][r] - 1;
+                        boolCol[i][r] = 1;
+                    }
+                }
+            }
+            if (s==0&&r==0){
+                if (probX[1][1]!=0){
+                    probX[1][1]=probX[1][1]-1;
+                }
+                if ((probX[2][2]!=0)/*&&(y1[2][2]!=0)*/&&(boolDia[2][2]==0)){
+                    probX[2][2]=probX[2][2]-1;
+                    boolDia[2][2]=1;
+                }
+            }
+            if (s==2&&r==2){
+                if (probX[1][1]!=0){
+                    probX[1][1]=probX[1][1]-1;
+                }
+                if ((probX[0][0]!=0)/*&&(y1[0][0]!=0)*/&&(boolDia[0][0]==0)){
+                    probX[0][0]=probX[0][0]-1;
+                    boolDia[0][0]=1;
+                }
+            }
+            if (s==0&&r==2){
+                if (probX[1][1]!=0){
+                    probX[1][1]=probX[1][1]-1;
+                }
+                if ((probX[2][0]!=0)/*&&(y1[2][0]!=0)*/&&(boolDia[2][0]==0)){
+                    probX[2][0]=probX[2][0]-1;
+                    boolDia[2][0]=1;
+                }
+            }
+            if (s==2&&r==0){
+                if (probX[1][1]!=0){
+                    probX[1][1]=probX[1][1]-1;
+                }
+                if ((probX[0][2]!=0)/*&&(y1[0][2]!=0)*/&&(boolDia[0][2]==0)){
+                    probX[0][2]=probX[0][2]-1;
+                    boolDia[0][2]=1;
+                }
+            }
+        }
+    }
+
+    public static void decrementprobO(int s, int r) {
+        int[][] boolDia1={{0,0,0},{0,0,0},{0,0,0}};
+        int[][] boolRow1={{0,0,0},{0,0,0},{0,0,0}};
+        int[][] boolCol1={{0,0,0},{0,0,0},{0,0,0}};
+        if (s == 1 && r == 1) {
+            probO[1][1]=0;
+            if ((probO[0][0]!=0)&& boolDia1[0][0]==0) {
+                probO[0][0]=probO[0][0]-1;
+                boolDia1[0][0]=1;
+            }
+            if ((probO[0][2]!=0)&& boolDia1[0][2]==0) {
+                probO[0][2]=probO[0][2]-1;
+                boolDia1[0][2]=1;
+            }
+            if ((probO[2][0]!=0)&& boolDia1[2][0]==0) {
+                probO[2][0]=probO[2][0]-1;
+                boolDia1[2][0]=1;
+            }
+            if ((probO[0][0]!=0)&& boolDia1[2][2]==0) {
+                probO[2][2]=probO[2][2]-1;
+                boolDia1[2][2]=1;
+            }
+            if ((probO[0][1]!=0)&&(boolCol1[0][1]==0)) {
+
+                probO[0][1]=probO[0][1]-1;
+                boolCol1[0][1]=1;
+            }
+            if ((probO[1][0]!=0)&&(boolRow1[1][0]==0)) {
+
+                probO[1][0]=probO[1][0]-1;
+                boolRow1[1][0]=1;
+            }
+            if ((probO[2][1]!=0)&&(boolCol1[2][1]==0)) {
+
+                probO[2][1]=probO[2][1]-1;
+                boolCol1[2][1]=1;
+            }
+            if ((probO[1][2]!=0)&&(boolRow1[1][2]==0)) {
+
+                probO[1][2]=probO[1][2]-1;
+                boolRow1[1][2]=1;
+            }
+            return;
+        } else {
+            for (int i = 0; i <= 2; i++) {
+                if (probO[s][i] == 0) {
+
+                    continue;
+                } else {
+                    if (boolRow1[s][i] == 1) {
+                        continue;
+                    } else {
+                        probO[s][i] = probO[s][i] - 1;
+                        boolRow1[s][i] = 1;
+                    }
+
+                }
+            }
+
+            for (int i = 0; i <= 2; i++) {
+                if (probO[i][r] == 0) {
+                    continue;
+                } else {
+                    if (boolCol1[i][r] == 1) {
+                        continue;
+                    } else {
+                        probO[i][r] = probO[i][r] - 1;
+                        boolCol1[i][r] = 1;
+                    }
+                }
+            }
+            if (s==0&&r==0){
+                if (probO[1][1]!=0){
+                    probO[1][1]=probO[1][1]-1;
+                }
+                if ((probO[2][2]!=0)/*&&(y2[2][2]!=0)*/&&(boolDia1[2][2]==0)){
+                    probO[2][2]=probO[2][2]-1;
+                    boolDia1[2][2]=1;
+                }
+            }
+            if (s==2&&r==2){
+                if (probO[1][1]!=0){
+                    probO[1][1]=probO[1][1]-1;
+                }
+                if ((probO[0][0]!=0)/*&&(y2[0][0]!=0)*/&&(boolDia1[0][0]==0)){
+                    probO[0][0]=probO[0][0]-1;
+                    boolDia1[0][0]=1;
+                }
+            }
+            if (s==0&&r==2){
+                if (probO[1][1]!=0){
+                    probO[1][1]=probO[1][1]-1;
+                }
+                if ((probO[2][0]!=0)/*&&(y2[2][0]!=0)*/&&(boolDia1[2][0]==0)){
+                    probO[2][0]=probO[2][0]-1;
+                    boolDia1[2][0]=1;
+                }
+            }
+            if (s==2&&r==0){
+                if (probO[1][1]!=0){
+                    probO[1][1]=probO[1][1]-1;
+                }
+                if ((probO[0][2]!=0)/*&&(y2[0][2]!=0)*/&&(boolDia1[0][2]==0)){
+                    probO[0][2]=probO[0][2]-1;
+                    boolDia1[0][2]=1;
+                }
+            }
+            return;
+        }
+    }
+}
